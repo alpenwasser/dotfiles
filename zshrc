@@ -170,13 +170,13 @@ function battery_status {
 
     case "${power_supply_status}" in
         Full)
-            battery_string="${PR_NO_COLOUR}${PR_LIGHT_GREEN}: ${PR_LIGHT_GREEN}${charged_symbol}"
+            battery_string=" ${PR_LIGHT_GREEN}${charged_symbol}"
             ;;
         Discharging)
-            battery_string="${PR_NO_COLOUR}${PR_LIGHT_GREEN}: ${PR_LIGHT_RED}${discharging_symbol}"
+            battery_string=" ${PR_LIGHT_RED}${discharging_symbol}"
             ;;
         Charging)
-            battery_string="${PR_NO_COLOUR}${PR_LIGHT_GREEN}: ${PR_LIGHT_CYAN}${charging_symbol}"
+            battery_string=" ${PR_LIGHT_CYAN}${charging_symbol}"
             ;;
         *)
             return
@@ -227,7 +227,7 @@ function precmd {
     #local righttopboxsize=${#${(%):- ${BATTERY_STRING}%D{%a %b %d %y}%n @ %m}}
     local pwdsize=${#${(%):-%~}}
     local righttopboxsize=${#${(%):- %D{%a %b %d %y}%n @ %m}}
-    local leftbotboxsize=${#${(%):- %* : %# }}
+    local leftbotboxsize=${#${(%):- %* }}
 
     # Subtract to account for color strings
     if [[ "${#GIT_STRING}" != 0 ]];then
@@ -254,18 +254,9 @@ function precmd {
         fi
     fi
 
-    case "${TERM}" in
-        linux)
-            (( leftbotboxsize = leftbotboxsize - 3 ))
-            ;;
-        xterm*)
-            (( leftbotboxsize = leftbotboxsize - 2 ))
-            ;;
-    esac
-
     if [[ "${#BATTERY_STRING}" != 0 ]];then
-        # Subtract 26 for colors
-        ((leftbotboxsize = ${leftbotboxsize} + ${#BATTERY_STRING} - 26))
+        # Subtract 9 for colors
+        ((leftbotboxsize = ${leftbotboxsize} + ${#BATTERY_STRING} - 9))
         BATTERY_STRING="${BATTERY_STRING} "
     fi
 
@@ -469,7 +460,6 @@ $PR_LRCORNER\
 $PR_SHIFT_OUT\
 $PR_NO_COLOUR\
 $PR_NORMAL_RED %* \
-$PR_LIGHT_GREEN: %(!.$PR_RED.$PR_WHITE)%# \
 $GIT_STRING\
 $BATTERY_STRING\
 $PR_BOX_COLOR\
@@ -480,6 +470,7 @@ $PR_SHIFT_OUT\
 $PR_GREEN %(?.OK.$PR_LIGHT_RED%?) \
 $PR_NO_COLOUR\
 $PR_SHIFT_OUT\
+%(!.$PR_RED.$PR_WHITE)%# \
 $PR_NO_COLOUR '
 
 
