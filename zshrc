@@ -231,13 +231,37 @@ function precmd {
 
     # Subtract to account for color strings
     if [[ "${#GIT_STRING}" != 0 ]];then
-        let "leftbotboxsize = ${leftbotboxsize} + ${#GIT_STRING} - 30 "
+
+        # There is likely something  weird going on with the
+        # color string lengths across various diferent $TERM
+        # variables  (screen,  linux,  xterm,  xerm-256color
+        # etc.).
+        case "${TERM}" in
+            linux)
+                (( leftbotboxsize = leftbotboxsize - 3 ))
+                ;;
+            xterm*)
+                (( leftbotboxsize = leftbotboxsize - 2 ))
+                ;;
+        esac
+
+
+        ((leftbotboxsize = leftbotboxsize + ${#GIT_STRING} - 30))
 
         # Color in case of modified branch
         if [[ $(git status --porcelain -z) != '' ]];then
-            let "leftbotboxsize = ${leftbotboxsize} -26"
+            (( leftbotboxsize = leftbotboxsize -26 ))
         fi
     fi
+
+    case "${TERM}" in
+        linux)
+            (( leftbotboxsize = leftbotboxsize - 3 ))
+            ;;
+        xterm*)
+            (( leftbotboxsize = leftbotboxsize - 2 ))
+            ;;
+    esac
 
     if [[ "${#BATTERY_STRING}" != 0 ]];then
         # Subtract 26 for colors
@@ -258,6 +282,7 @@ function precmd {
         PR_BOXBOT="\${(l.$leftbotboxsize..${PR_HBAR}.)}"
         PR_BOXPWD="\${(l.$pwdsize..${PR_HBAR}.)}"
     fi
+
 
 }
 
@@ -332,7 +357,7 @@ setprompt () {
     else
         PR_SHIFT_IN="%{$terminfo[smacs]%}"
         PR_SHIFT_OUT="%{$terminfo[rmacs]%}"
-        PR_HBAR=${altchar[q]:--}
+        PR_HBAR=${altchar[q]:-}
         PR_ULCORNER='╭'
         PR_LLCORNER='╰'
         PR_LRCORNER='╯'
