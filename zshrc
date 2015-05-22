@@ -188,8 +188,8 @@ function battery_status {
     # do integer math for the percentage calculations.
     power_supply_charge_now="${power_supply_charge_now}."
     power_supply_charge_full="${power_supply_charge_full}."
-    ((battery_percentage = power_supply_charge_now / power_supply_charge_full))
-    battery_percentage=${battery_percentage:2:2}
+    ((battery_percentage = power_supply_charge_now / power_supply_charge_full * 100))
+    battery_percentage=${battery_percentage%\.*}
 
     battery_string="${battery_string} ${battery_percentage}%%"
 
