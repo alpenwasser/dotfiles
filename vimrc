@@ -307,6 +307,18 @@ map 00 <HOME>
 " Remap <Esc> and save to 'jk'
 :imap jk <Esc>:w<CR>
 
+" Map hh to move left and not re-enter insert mode
+:imap hh <Esc>
+
+" Map jj to move left and re-enter insert mode
+:imap jj <Esc>i
+
+" Map kk to move right and re-enter insert mode
+:imap kk <Esc><right><right>i
+
+" Map kk to move right and not re-enter insert mode
+:imap ll <Esc><right><right>
+
 " Remap <Esc> to 'jl'
 :imap jl <Esc>
 
@@ -478,7 +490,7 @@ let g:syntastic_enable_balloons=1
 let g:syntastic_always_populate_loc_list=1
 let g:syntastic_echo_current_error=1
 let g:syntastic_enable_highlighting=1
-let g:syntastic_auto_jump=1
+let g:syntastic_auto_jump=0
 let g:syntastic_auto_loc_list=1
 let g:syntastic_loc_list_height=5
 let g:syntastic_aggregate_errors=1

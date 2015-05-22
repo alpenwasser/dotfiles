@@ -1,0 +1,9 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =7
+let g:netrw_dirhist_1='/home/of-1'
+let g:netrw_dirhist_2='/home/of-1/repository'
+let g:netrw_dirhist_3='/home/of-1/repository/it'
+let g:netrw_dirhist_4='/home/of-1/repository/it/LaTeX'
+let g:netrw_dirhist_5='/home/of-1'
+let g:netrw_dirhist_6='/home/of-1/repository'
+let g:netrw_dirhist_7='/home/of-1/repository/notes'

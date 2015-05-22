@@ -1,10 +1,1 @@
-*
 .zshrc.private
-!.gitignore
-!.zshrc
-!.vimrc
-!.i3
-!.vim
-!.bashrc
-!README.md
-!LICENSE

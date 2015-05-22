@@ -1,0 +1,47 @@
+// vim:ts=4:sw=4:et
+{
+    "border": "normal",
+    "current_border_width": 2,
+    "floating": "auto_off",
+    "geometry": {
+       "height": 394,
+       "width": 724,
+       "x": 0,
+       "y": 0
+    },
+    "name": "uxterm",
+    "percent": 0.880555555555556,
+    "swallows": [
+       {
+        "class": "^UXTerm$",
+       // "instance": "^xterm$",
+       // "title": "^uxterm$",
+       // "transient_for": "^$"
+       }
+    ],
+    "type": "con"
+}
+
+{
+    "border": "none",
+    "current_border_width": 2,
+    "floating": "auto_off",
+    "geometry": {
+       "height": 10,
+       "width": 10,
+       "x": 0,
+       "y": 0
+    },
+    "name": "Conky (seshat)",
+    "percent": 0.119444444444444,
+    "swallows": [
+       {
+        "class": "^Conky$",
+        "instance": "^Conky$",
+        "title": "^Conky\\ \\(seshat\\)$",
+       // "transient_for": "^$"
+       }
+    ],
+    "type": "con"
+}
+

@@ -72,21 +72,137 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 eval $(keychain --eval --agents ssh -Q --quiet id_ecdsa id_rsa id_rsa_long)
 
 # Functions
+
+# Add autocompletion for SSH hosts based on known hosts
+zstyle -e \
+    ':completion::*:hosts'\
+    hosts \
+    'reply=($(sed -e "/^#/d" -e "s/ .*\$//" -e \
+    "s/,/ /g" /etc/ssh_known_hosts(N) \
+    ~/.ssh/known_hosts(N) 2>/dev/null | \
+    xargs) $(grep \^Host ~/.ssh/config(N) | \
+    cut -f2 -d\  2>/dev/null | xargs))'
+
 function git_prompt {
     # Check if dir is inside a git repo
     if [[ $(git rev-parse --is-inside-work-tree 2>>/dev/null) ]];then
+
+        # Grab git branch
         ref=$(git symbolic-ref HEAD 2>>/dev/null | cut -d'/' -f3)
-        echo "$PR_GREEN:$PR_CYAN $ref "
+
+        # Check if uncommitted changes have been made on current branch.
+        if [[ $(git status --porcelain -z) != '' ]];then
+            ref="${ref} ${PR_RED}+${PR_WHITE}"
+        fi
+
+        # Don't put any funny symbols into TTY
+        if [[ $TERM == linux ]];then
+            echo "${PR_GREEN} |-' ${PR_NO_COLOUR}${PR_LIGHT_CYAN} $ref "
+        else
+            #echo "$PR_GREEN \ue0a0 $PR_CYAN $ref "
+
+            # Note that this is not a standard UTF-8 symbol,
+            # requires a patched powerline font.
+            echo "${PR_GREEN}  ${PR_NO_COLOUR}${PR_LIGHT_CYAN} $ref "
+        fi
     else
         echo ''
     fi
 }
+
+function battery_status {
+
+    # ---------------------------------------------------- #
+    # Checks battery status and  outputs result. NOTE: The #
+    # path  to the  uevent file  for the  battery on  your #
+    # laptop might need to be adjusted for this.           #
+    #                                                      #
+    # How  to  find your  battery,  one  of the  following #
+    # commands should get you  started on the right track: #
+    # find  /sys/devices  -type  d  -iname  \*BAT0\*       #
+    # find /sys/devices -type f -iname \*power_supply\*    #
+    # ---------------------------------------------------- #
+
+    local battery_string=''
+	local battery_path='/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:5f/PNP0C09:00/ACPI0001:00/ACPI0002:00/power_supply/BAT0/uevent'
+	local utf_charging_symbol='⚇'
+    local tty_charging_symbol='CHAR'
+	local utf_discharging_symbol='⚡'
+	local tty_discharging_symbol='BAT'
+	local utf_charged_symbol='☻'
+	local tty_charged_symbol='FULL'
+    local charging_symbol=''
+    local discharging_symbol=''
+    local charged_symbol=''
+
+    if [[ $TERM == 'linux' ]];then
+        charging_symbol=$tty_charging_symbol
+        discharging_symbol=$tty_discharging_symbol
+        charged_symbol=$tty_charged_symbol
+    else
+        charging_symbol=$utf_charging_symbol
+        discharging_symbol=$utf_discharging_symbol
+        charged_symbol=$utf_charged_symbol
+    fi
+
+    local power_supply_status='' # can be 'Discharging', 'Full' or 'Charging'
+    local power_supply_charge_full=''
+    local power_supply_charge_now=''
+    local power_supply_current_now=''
+    local battery_percentage=''
+
+    # No battery present
+    # TODO: Take into account swappable batteries
+    if [[ $battery_path == '' ]];then
+        return
+    fi
+
+    # Grab status:
+    power_supply_status="$(grep 'POWER_SUPPLY_STATUS=' < "$battery_path")" 
+    power_supply_charge_full="$(grep 'POWER_SUPPLY_CHARGE_FULL=' < "$battery_path")" 
+    power_supply_charge_now="$(grep 'POWER_SUPPLY_CHARGE_NOW=' < "$battery_path")" 
+
+    # Cut off unnecessary string parts from front:
+    power_supply_status="${power_supply_status#*=}"
+    power_supply_charge_full="${power_supply_charge_full#*=}"
+    power_supply_charge_now="${power_supply_charge_now#*=}"
+
+
+    case "${power_supply_status}" in
+        Full)
+            battery_string="${PR_NO_COLOUR}${PR_LIGHT_GREEN}: ${PR_LIGHT_GREEN}${charged_symbol}"
+            ;;
+        Discharging)
+            battery_string="${PR_NO_COLOUR}${PR_LIGHT_GREEN}: ${PR_LIGHT_RED}${discharging_symbol}"
+            ;;
+        Charging)
+            battery_string="${PR_NO_COLOUR}${PR_LIGHT_GREEN}: ${PR_LIGHT_CYAN}${charging_symbol}"
+            ;;
+        *)
+            return
+            ;;
+    esac
+
+    # The numbers we get from  the uevent file are integers,
+    # we must convert them to  floating point first lest ZSH
+    # do integer math for the percentage calculations.
+    power_supply_charge_now="${power_supply_charge_now}."
+    power_supply_charge_full="${power_supply_charge_full}."
+    ((battery_percentage = power_supply_charge_now / power_supply_charge_full))
+    battery_percentage=${battery_percentage:2:2}
+
+    battery_string="${battery_string} ${battery_percentage}%%"
+
+    echo "${battery_string}"
+}
+
 
 # prompt configuration
 autoload colors; colors
 function precmd {
 
     GIT_STRING="$(git_prompt)"
+    BATTERY_STRING="$(battery_status)"
 
     local TERMWIDTH
     #COLUMNS is env variable
@@ -99,46 +215,49 @@ function precmd {
     PR_FILLBAR=""
     PR_FILLSPACE=""
     PR_PWDLEN=""
-    PR_BOXTOP=""
-    PR_BOXBOT=""
-    PR_BOXPWD=""
+    PR_BOXTOP="" # box on top right
+    PR_BOXBOT="" # box on bottom left
+    PR_BOXPWD="" # box on top left
     
     # %n: login name, %m: part of host name to first -
     # %l: current tty, e.g. pts/100
     # %~: current working dir relative to user's home dir
     # figure out the length of this construct
     local promptsize=${#${(%):---( %D{%a %b %d %y}%n @ %m)---()--}}
+    #local righttopboxsize=${#${(%):- ${BATTERY_STRING}%D{%a %b %d %y}%n @ %m}}
     local pwdsize=${#${(%):-%~}}
-    local lefttopboxsize=${#${(%):- %D{%a %b %d %y}%n @ %m}}
+    local righttopboxsize=${#${(%):- %D{%a %b %d %y}%n @ %m}}
     local leftbotboxsize=${#${(%):- %* : %# }}
+
     # Subtract to account for color strings
-    if ! [[ "${#GIT_STRING}" == 0 ]];then
-        let "leftbotboxsize = ${leftbotboxsize} + ${#GIT_STRING} - 26 "
+    if [[ "${#GIT_STRING}" != 0 ]];then
+        let "leftbotboxsize = ${leftbotboxsize} + ${#GIT_STRING} - 30 "
+
+        # Color in case of modified branch
+        if [[ $(git status --porcelain -z) != '' ]];then
+            let "leftbotboxsize = ${leftbotboxsize} -26"
+        fi
+    fi
+
+    if [[ "${#BATTERY_STRING}" != 0 ]];then
+        # Subtract 26 for colors
+        ((leftbotboxsize = ${leftbotboxsize} + ${#BATTERY_STRING} - 26))
     fi
 
     if [[ "$promptsize + $pwdsize" -gt $TERMWIDTH ]]; then
 	    ((PR_PWDLEN=$TERMWIDTH - $promptsize))
         PR_BOXPWD="\${(l.$PR_PWDLEN..${PR_HBAR}.)}"
-        PR_BOXTOP="\${(l.(($lefttopboxsize + 2))..${PR_HBAR}.)}"
+        PR_BOXTOP="\${(l.(($righttopboxsize + 2))..${PR_HBAR}.)}"
         PR_BOXBOT="\${(l.$leftbotboxsize..${PR_HBAR}.)}"
         PR_FILLSPACE="   "
     else
         PR_FILLBAR="\${(l.(($TERMWIDTH - ($promptsize + $pwdsize)))..${PR_HBAR}.)}"
         PR_FILLSPACE="\${(l.(($TERMWIDTH - ($promptsize + $pwdsize) + 3))..${PR_SPACE}.)}"
-        PR_BOXTOP="\${(l.(($lefttopboxsize + 2))..${PR_HBAR}.)}"
+        PR_BOXTOP="\${(l.(($righttopboxsize + 2))..${PR_HBAR}.)}"
         PR_BOXBOT="\${(l.$leftbotboxsize..${PR_HBAR}.)}"
         PR_BOXPWD="\${(l.$pwdsize..${PR_HBAR}.)}"
     fi
 
-
-    ###
-    # Get APM info.
-
-    if which ibam > /dev/null; then
-	PR_APM_RESULT=`ibam --percentbattery`
-    elif which apm > /dev/null; then
-	PR_APM_RESULT=`apm`
-    fi
 }
 
 
@@ -169,8 +288,10 @@ setprompt () {
     fi
     for color in RED GREEN YELLOW BLUE MAGENTA CYAN WHITE; do
         eval PR_$color='%{$terminfo[bold]$fg[${(L)color}]%}'
-        eval PR_NORMAL_$color='%{$fg[${(L)color}]%}'
-        eval PR_LIGHT_$color='%{$fg[${(L)color}]%}'
+        eval PR_NORMAL_$color='%{$terminfo[normal]$fg[${(L)color}]%}'
+        eval PR_LIGHT_$color='%{$terminfo[light]$fg[${(L)color}]%}'
+        #eval PR_NORMAL_$color='%{$fg[${(L)color}]%}'
+        #eval PR_LIGHT_$color='%{$fg[${(L)color}]%}'
         (( count = $count + 1 ))
     done
 
@@ -193,30 +314,38 @@ setprompt () {
     typeset -A altchar
     set -A altchar ${(s..)terminfo[acsc]}
     PR_SET_CHARSET="%{$terminfo[enacs]%}"
-    PR_SHIFT_IN="%{$terminfo[smacs]%}"
-    PR_SHIFT_OUT="%{$terminfo[rmacs]%}"
-    PR_HBAR=${altchar[q]:--}
-    PR_ULCORNER=${altchar[l]:--}
-    PR_LLCORNER=${altchar[m]:--}
-    PR_LRCORNER=${altchar[j]:--}
-    PR_URCORNER=${altchar[k]:--}
-    PR_TLEFT=${altchar[u]:--}
-    PR_TRIGHT=${altchar[t]:--}
-    PR_VBAR=${altchar[x]:-|}
-    PR_SPACE=' '
 
-    # round corners, experimental
-    #PR_SHIFT_IN=''
-    #PR_SHIFT_OUT=''
-    #PR_HBAR='─'
-    #PR_ULCORNER='╭'
-    #PR_LLCORNER='╰'
-    #PR_LRCORNER='╯'
-    #PR_URCORNER='╮'
-    #PR_TLEFT='┤'
-    #PR_TRIGHT='├'
-    #PR_VBAR='│'
-    #PR_SPACE=' '
+    # Set box characters, based on whether we're in a TTY or not.
+    if [[ $TERM == 'linux' ]];then
+        PR_SHIFT_IN=''
+        PR_SHIFT_OUT=''
+        PR_HBAR='-'
+        PR_ULCORNER='-'
+        PR_LLCORNER='-'
+        PR_LRCORNER='-'
+        PR_URCORNER='-'
+        PR_TLEFT='+'
+        PR_TRIGHT='+'
+        PR_VBAR='|'
+        PR_SPACE=' '
+    else
+        PR_SHIFT_IN="%{$terminfo[smacs]%}"
+        PR_SHIFT_OUT="%{$terminfo[rmacs]%}"
+        PR_HBAR=${altchar[q]:--}
+        PR_ULCORNER='╭'
+        PR_LLCORNER='╰'
+        PR_LRCORNER='╯'
+        PR_URCORNER='╮'
+        PR_TLEFT=${altchar[u]:--}
+        PR_TRIGHT=${altchar[t]:--}
+        PR_VBAR=${altchar[x]:-|}
+        PR_SPACE=' '
+    fi
+
+    # Set colors based on root or not
+    # %(x.true.false)
+    PR_BOX_COLOR=%(!.$PR_RED.$PR_MAGENTA)
+    PR_LINE_COLOR=%(!.$PR_WHITE.$PR_CYAN)
     
     ###
     # Decide if we need to set titlebar text.
@@ -234,33 +363,14 @@ setprompt () {
     esac
     
     
-    ###
-    # Decide whether to set a screen title
-    #if [[ "$TERM" == "screen" ]]; then
-	#PR_STITLE=$'%{\ekzsh\e\\%}'
-    #else
-	#PR_STITLE=''
-    #fi
     
-    
-    ###
-    # APM detection
-    
-    if which ibam > /dev/null; then
-	PR_APM='$PR_RED${${PR_APM_RESULT[(f)1]}[(w)-2]}%%(${${PR_APM_RESULT[(f)3]}[(w)-1]})$PR_LIGHT_BLUE:'
-    elif which apm > /dev/null; then
-	PR_APM='$PR_RED${PR_APM_RESULT[(w)5,(w)6]/\% /%%}$PR_LIGHT_BLUE:'
-    else
-	PR_APM=''
-    fi
-   
     ###
     # Finally, the prompt.
     PROMPT='\
 $PR_SET_CHARSET\
 $PR_STITLE\
 ${(e)PR_TITLEBAR}\
-$PR_MAGENTA\
+$PR_BOX_COLOR\
 $PR_SHIFT_IN  \
 $PR_ULCORNER\
 ${(e)PR_BOXPWD}\
@@ -272,40 +382,40 @@ $PR_ULCORNER\
 ${(e)PR_BOXTOP}\
 $PR_URCORNER\
 $PR_SHIFT_OUT
-$PR_CYAN\
+$PR_LINE_COLOR\
 $PR_SHIFT_IN\
 $PR_ULCORNER\
-$PR_MAGENTA\
+$PR_BOX_COLOR\
 $PR_HBAR\
 $PR_TLEFT\
 $PR_SHIFT_OUT\
 $PR_NO_COLOUR\
 $PR_NORMAL_GREEN\
 %$PR_PWDLEN<...<%~%<<\
-$PR_MAGENTA\
+$PR_BOX_COLOR\
 $PR_SHIFT_IN\
 $PR_TRIGHT\
 $PR_HBAR\
-$PR_CYAN\
+$PR_LINE_COLOR\
 $PR_HBAR\
 ${(e)PR_FILLBAR}\
-$PR_MAGENTA\
+$PR_BOX_COLOR\
 $PR_HBAR\
 $PR_TLEFT\
 $PR_SHIFT_OUT\
 $PR_NO_COLOUR\
-$PR_NORMAL_CYAN %D{%a %b %d %y}\
+$PR_NORMAL_LINE_COLOR %D{%a %b %d %y}\
 $PR_NORMAL_WHITE%(!. %n. %n)\
 $PR_NORMAL_GREEN @ \
 $PR_NORMAL_WHITE%m \
-$PR_MAGENTA\
+$PR_BOX_COLOR\
 $PR_SHIFT_IN\
 $PR_VBAR\
 $PR_SHIFT_OUT
-$PR_CYAN\
+$PR_LINE_COLOR\
 $PR_SHIFT_IN\
 $PR_VBAR \
-$PR_MAGENTA\
+$PR_BOX_COLOR\
 $PR_LLCORNER\
 ${(e)PR_BOXPWD}\
 $PR_LRCORNER\
@@ -316,18 +426,18 @@ $PR_LLCORNER\
 ${(e)PR_BOXTOP}\
 $PR_LRCORNER\
 $PR_SHIFT_OUT
-$PR_CYAN\
+$PR_LINE_COLOR\
 $PR_SHIFT_IN\
 $PR_VBAR \
-$PR_MAGENTA\
+$PR_BOX_COLOR\
 $PR_ULCORNER\
 ${(e)PR_BOXBOT}\
 $PR_URCORNER\
 $PR_SHIFT_OUT
-$PR_CYAN\
+$PR_LINE_COLOR\
 $PR_SHIFT_IN\
 $PR_LLCORNER\
-$PR_MAGENTA\
+$PR_BOX_COLOR\
 $PR_HBAR\
 $PR_LRCORNER\
 $PR_SHIFT_OUT\
@@ -335,7 +445,8 @@ $PR_NO_COLOUR\
 $PR_NORMAL_RED %* \
 $PR_LIGHT_GREEN: %(!.$PR_RED.$PR_WHITE)%# \
 $GIT_STRING\
-$PR_MAGENTA\
+$BATTERY_STRING \
+$PR_BOX_COLOR\
 $PR_SHIFT_IN\
 $PR_LLCORNER\
 $PR_HBAR\
@@ -347,7 +458,7 @@ $PR_NO_COLOUR '
 
 
     PS2='\
-$PR_MAGENTA  \
+$PR_BOX_COLOR  \
 $PR_SHIFT_IN\
 $PR_LLCORNER\
 $PR_HBAR\
@@ -355,7 +466,7 @@ $PR_TLEFT\
 $PR_SHIFT_OUT\
 $PR_LIGHT_GREEN\
 %_\
-$PR_MAGENTA\
+$PR_BOX_COLOR\
 $PR_SHIFT_IN\
 $PR_TRIGHT\
 $PR_HBAR\
