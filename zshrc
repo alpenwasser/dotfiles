@@ -85,7 +85,7 @@ zstyle -e \
 
 function git_prompt {
     # Check if dir is inside a git repo
-    if [[ $(git rev-parse --is-inside-work-tree 2>>/dev/null) ]];then
+    if [ $(git rev-parse --is-inside-work-tree 2>>/dev/null) ];then
 
         # Grab git branch
         ref=$(git symbolic-ref HEAD 2>>/dev/null | cut -d'/' -f3)
