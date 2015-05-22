@@ -242,6 +242,7 @@ function precmd {
     if [[ "${#BATTERY_STRING}" != 0 ]];then
         # Subtract 26 for colors
         ((leftbotboxsize = ${leftbotboxsize} + ${#BATTERY_STRING} - 26))
+        BATTERY_STRING="${BATTERY_STRING} "
     fi
 
     if [[ "$promptsize + $pwdsize" -gt $TERMWIDTH ]]; then
@@ -445,7 +446,7 @@ $PR_NO_COLOUR\
 $PR_NORMAL_RED %* \
 $PR_LIGHT_GREEN: %(!.$PR_RED.$PR_WHITE)%# \
 $GIT_STRING\
-$BATTERY_STRING \
+$BATTERY_STRING\
 $PR_BOX_COLOR\
 $PR_SHIFT_IN\
 $PR_LLCORNER\
