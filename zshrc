@@ -202,7 +202,8 @@ autoload colors; colors
 function precmd {
 
     GIT_STRING="$(git_prompt)"
-    BATTERY_STRING="$(battery_status)"
+
+    BATTERY_STRING="$(battery_status)" 
 
     local TERMWIDTH
     #COLUMNS is env variable
@@ -277,6 +278,13 @@ function precmd {
 
 }
 
+
+# Continuously update the prompt
+TRAPALRM() {
+    precmd
+    zle reset-prompt
+}
+TMOUT=1
 
 setopt extended_glob
 
