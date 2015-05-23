@@ -279,7 +279,7 @@ bindsym Mod4+m exec i3lock -i "/home/of-1/host/resources/wallpapers/galaxy.png"
 exec --no-startup-id "i3-msg 'workspace 1; append_layout /home/of-1/.i3/workspace_1.json'"
 
 exec --no-startup-id /home/of-1/host/bin/conky.sh
-exec --no-startup-id uxterm -e tmux
+exec --no-startup-id gnome-terminal -e tmux
 
 exec --no-startup-id autocutsel -fork &
 exec --no-startup-id autocutsel -selection PRIMARY -fork &
