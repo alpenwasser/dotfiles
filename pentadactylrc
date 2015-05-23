@@ -21,7 +21,7 @@ map -count -modes=n,v x <count>:quit<Return>
 " vim: set ft=pentadactyl:
 
 " EDITOR
-set editor='uxterm -e "vim +<line> +\"sil! call cursor(0, <column>)\" <file>"'
+set editor='gnome-terminal --hide-menubar -e "vim +<line> +\"sil! call cursor(0, <column>)\" <file>"'
 
 " hi FontFixed -append font-size: 10pt !important;
 
