@@ -103,7 +103,7 @@ function git_prompt {
 
             # Note that this is not a standard UTF-8 symbol,
             # requires a patched powerline font.
-            echo "${PR_GREEN}  ${PR_NO_COLOUR}${PR_LIGHT_CYAN} $ref "
+            echo "${PR_GREEN}  ${PR_NO_COLOUR}%(!.${PR_NORMAL_WHITE}.${PR_NORMAL_CYAN}) $ref "
         fi
     else
         echo ''
@@ -239,7 +239,7 @@ function precmd {
         # etc.).
         case "${TERM}" in
             linux)
-                (( leftbotboxsize = leftbotboxsize - 3 ))
+                (( leftbotboxsize = leftbotboxsize + 12 ))
                 ;;
             xterm*)
                 (( leftbotboxsize = leftbotboxsize - 2 ))
@@ -251,7 +251,7 @@ function precmd {
 
         # Color in case of modified branch
         if [[ $(git status --porcelain -z) != '' ]];then
-            (( leftbotboxsize = leftbotboxsize -26 ))
+            (( leftbotboxsize = leftbotboxsize - 41 ))
         fi
     fi
 
@@ -415,7 +415,7 @@ $PR_HBAR\
 $PR_TLEFT\
 $PR_SHIFT_OUT\
 $PR_NO_COLOUR\
-$PR_NORMAL_GREEN\
+%(!.$PR_NORMAL_WHITE.$PR_NORMAL_GREEN)\
 %$PR_PWDLEN<...<%~%<<\
 $PR_BOX_COLOR\
 $PR_SHIFT_IN\
@@ -429,10 +429,11 @@ $PR_HBAR\
 $PR_TLEFT\
 $PR_SHIFT_OUT\
 $PR_NO_COLOUR\
+%(!.$PR_NORMAL_WHITE.$PR_NO_COLOUR)\
 $PR_NORMAL_LINE_COLOR %D{%a %b %d %y}\
-$PR_NORMAL_WHITE%(!. %n. %n)\
+%(!.$PR_NORMAL_YELLOW.$PR_NORMAL_WHITE) %n\
 $PR_NORMAL_GREEN @ \
-$PR_NORMAL_WHITE%m \
+%(!.$PR_NORMAL_YELLOW.$PR_NORMAL_WHITE)%m \
 $PR_BOX_COLOR\
 $PR_SHIFT_IN\
 $PR_VBAR\
@@ -467,7 +468,7 @@ $PR_HBAR\
 $PR_LRCORNER\
 $PR_SHIFT_OUT\
 $PR_NO_COLOUR\
-$PR_NORMAL_RED %* \
+%(!.$PR_NORMAL_WHITE.$PR_NORMAL_RED) %* \
 $GIT_STRING\
 $BATTERY_STRING\
 $PR_BOX_COLOR\
