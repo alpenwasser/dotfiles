@@ -44,3 +44,4 @@ Adds some Vim-like keybindings:
 * `shift-h`: Toggle hidden files being displayed
 * `shift-c`: copy selected files
 * `shift-m`: move selected files
+* `shift-d`: delete selected files

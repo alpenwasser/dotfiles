@@ -8,7 +8,7 @@ Edit = f4
 Copy = f5;shift-c;
 Move = f6;shift-m;
 MakeDir = f7
-Delete = f8
+Delete = f8;shift-d;
 Menu = f9
 Quit = f10
 MenuLastSelected = f19
@@ -201,7 +201,7 @@ PageUp = pgup; alt-v
 PageDown = pgdn; ctrl-v
 Enter = enter
 Search = ctrl-s; alt-s
-Delete = f8; delete
+Delete = f8; delete; shift-d;
 
 [help]
 Help = f1
@@ -264,7 +264,7 @@ SaveAs = f12; ctrl-f2
 Mark = f3
 Copy = f5
 Move = f6
-Remove = f8
+Remove = f8;shift-d;
 # MarkLine =
 # MarkWord =
 # MarkAll =
