@@ -92,7 +92,7 @@ function git_prompt {
 
         # Check if uncommitted changes have been made on current branch.
         if [[ $(git status --porcelain -z) != '' ]];then
-            ref="${ref} ${PR_RED}+${PR_WHITE}"
+            ref="${ref} ${PR_RED}+"
         fi
 
         # Don't put any funny symbols into TTY
@@ -167,22 +167,6 @@ function battery_status {
     power_supply_charge_full="${power_supply_charge_full#*=}"
     power_supply_charge_now="${power_supply_charge_now#*=}"
 
-
-    case "${power_supply_status}" in
-        Full)
-            battery_string=" ${PR_LIGHT_GREEN}${charged_symbol}"
-            ;;
-        Discharging)
-            battery_string=" ${PR_LIGHT_RED}${discharging_symbol}"
-            ;;
-        Charging)
-            battery_string=" ${PR_LIGHT_CYAN}${charging_symbol}"
-            ;;
-        *)
-            return
-            ;;
-    esac
-
     # The numbers we get from  the uevent file are integers,
     # we must convert them to  floating point first lest ZSH
     # do integer math for the percentage calculations.
@@ -190,6 +174,27 @@ function battery_status {
     power_supply_charge_full="${power_supply_charge_full}."
     ((battery_percentage = power_supply_charge_now / power_supply_charge_full * 100))
     battery_percentage=${battery_percentage%\.*}
+
+    case "${power_supply_status}" in
+        Full)
+            battery_string=" ${PR_LIGHT_GREEN}${charged_symbol}"
+            ;;
+        Discharging)
+            if [[ $battery_percentage > 90 ]];then
+                battery_string=" ${PR_LIGHT_RED}${discharging_symbol}"
+            elif [[ $battery_percentage < 20 ]];then
+                battery_string=" ${PR_LIGHT_RED}${discharging_symbol}"
+            else
+                battery_string=" ${PR_LIGHT_YELLOW}${discharging_symbol}"
+            fi
+            ;;
+        Charging)
+            battery_string=" ${PR_LIGHT_YELLOW}${charging_symbol}"
+            ;;
+        *)
+            return
+            ;;
+    esac
 
     battery_string="${battery_string} ${battery_percentage}%%"
 
@@ -246,12 +251,12 @@ function precmd {
                 ;;
         esac
 
+        # Git string: default for no uncommitted changes
+        ((leftbotboxsize = leftbotboxsize + ${#GIT_STRING} - 45))
 
-        ((leftbotboxsize = leftbotboxsize + ${#GIT_STRING} - 30))
-
-        # Color in case of modified branch
+        # In case of modified branch
         if [[ $(git status --porcelain -z) != '' ]];then
-            (( leftbotboxsize = leftbotboxsize - 41 ))
+            (( leftbotboxsize = leftbotboxsize - 13 ))
         fi
     fi
 
@@ -470,6 +475,7 @@ $PR_SHIFT_OUT\
 $PR_NO_COLOUR\
 %(!.$PR_NORMAL_WHITE.$PR_NORMAL_RED) %* \
 $GIT_STRING\
+$PR_NO_COLOUR\
 $BATTERY_STRING\
 $PR_BOX_COLOR\
 $PR_SHIFT_IN\
