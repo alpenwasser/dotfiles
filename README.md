@@ -31,6 +31,8 @@ Adds some Vim-like keybindings:
 * `j`: Down (move down in file list)
 * `k`: Up (move in file list)
 * `l`: Right (open dir)
+* `shift-j`: Page Down
+* `shift-k`: Page Up
 * `shift-h`: Toggle hidden files being displayed
 * `shift-c`: copy selected files
 * `shift-m`: move selected files
