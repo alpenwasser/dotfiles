@@ -23,8 +23,16 @@ Features:
 Midnight Commander
 ------------------
 
-Adds colour scheme from ![Zoltan Puskas](https://github.com/zpuskas/linux/blob/master/home/.local/share/mc/skins/darkened.ini),
+### Color Scheme
+
+Adds dark colour scheme from ![Zoltan Puskas](https://github.com/zpuskas/linux/blob/master/home/.local/share/mc/skins/darkened.ini),
 blog post can be found ![here](https://sinustrom.info/2014/03/23/midnight-commander-dark-color-scheme/).
+
+Screenshot:
+![Midnight Commander Dark Colour Scheme](http://www.alpenwasser.net/images/2015-05-25--18-25-59--mc-darkened.png)
+
+
+### Vi Keybidindings
 
 Adds some Vim-like keybindings:
 * `h`: Left (move to parent directory)
