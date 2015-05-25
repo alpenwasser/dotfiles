@@ -32,7 +32,7 @@ Screenshot:
 ![Midnight Commander Dark Colour Scheme](http://www.alpenwasser.net/images/2015-05-25--18-25-59--mc-darkened.png)
 
 
-### Vi Keybidindings
+### Vi Keybindings
 
 Adds some Vim-like keybindings:
 * `h`: Left (move to parent directory)
