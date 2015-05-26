@@ -91,7 +91,7 @@ function git_prompt {
         ref=$(git symbolic-ref HEAD 2>>/dev/null | cut -d'/' -f3)
 
         # Check if uncommitted changes have been made on current branch.
-        if [[ $(git status --porcelain -z) != '' ]];then
+        if [[ $(git status --porcelain -z 2>>/dev/null) != '' ]];then
             ref="${ref} ${PR_RED}+"
         fi
 
@@ -255,7 +255,7 @@ function precmd {
         ((leftbotboxsize = leftbotboxsize + ${#GIT_STRING} - 45))
 
         # In case of modified branch
-        if [[ $(git status --porcelain -z) != '' ]];then
+        if [[ $(git status --porcelain -z 2>>/dev/null) != '' ]];then
             (( leftbotboxsize = leftbotboxsize - 13 ))
         fi
     fi
