@@ -180,9 +180,7 @@ function battery_status {
             battery_string=" ${PR_LIGHT_GREEN}${charged_symbol}"
             ;;
         Discharging)
-            if [[ $battery_percentage > 90 ]];then
-                battery_string=" ${PR_LIGHT_RED}${discharging_symbol}"
-            elif [[ $battery_percentage < 20 ]];then
+            if [[ $battery_percentage < 20 ]];then
                 battery_string=" ${PR_LIGHT_RED}${discharging_symbol}"
             else
                 battery_string=" ${PR_LIGHT_YELLOW}${discharging_symbol}"
