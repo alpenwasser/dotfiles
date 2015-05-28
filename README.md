@@ -25,8 +25,8 @@ Midnight Commander
 
 ### Color Scheme
 
-Adds dark colour scheme from ![Zoltan Puskas](https://github.com/zpuskas/linux/blob/master/home/.local/share/mc/skins/darkened.ini),
-blog post can be found ![here](https://sinustrom.info/2014/03/23/midnight-commander-dark-color-scheme/).
+Adds dark colour scheme from [Zoltan Puskas](https://github.com/zpuskas/linux/blob/master/home/.local/share/mc/skins/darkened.ini),
+blog post can be found [here](https://sinustrom.info/2014/03/23/midnight-commander-dark-color-scheme/).
 
 Screenshot:
 ![Midnight Commander Dark Colour Scheme](http://www.alpenwasser.net/images/2015-05-25--18-25-59--mc-darkened.png)
@@ -34,7 +34,7 @@ Screenshot:
 
 ### Vi Keybindings
 
-Adds some Vim-like keybindings:
+Adds some Vim-like keybindings. In main file browsing mode:
 * `h`: Left (move to parent directory)
 * `j`: Down (move down in file list)
 * `k`: Up (move in file list)
@@ -45,3 +45,9 @@ Adds some Vim-like keybindings:
 * `shift-c`: copy selected files
 * `shift-m`: move selected files
 * `shift-d`: delete selected files
+
+In tree listing:
+* `j`: Down
+* `k`: Up
+* `l`: Enter (open directory)
+* `h`: Forget. Closes directory and removes it from tree; reopening the parent dir will make it appear again. Not absolutely optimal, but apparently there is no way to just close the subtree again.

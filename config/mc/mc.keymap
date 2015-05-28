@@ -187,19 +187,19 @@ Clear = shift-delete; shift-d
 [tree]
 Help = f1
 Reread = f2; ctrl-r
-Forget = f3
+Forget = f3; h;
 ToggleNavigation = f4
 Copy = f5
 Move = f6
-Up = up; ctrl-p
-Down = down; ctrl-n
-Left = left
-Right = right
+Up = up; ctrl-p; k;
+Down = down; ctrl-n; j;
+Left = left;
+Right = right;
 Top = home; alt-lt; a1
 Bottom = end; alt-gt; c1
-PageUp = pgup; alt-v
-PageDown = pgdn; ctrl-v
-Enter = enter
+PageUp = pgup; alt-v; shift-k;
+PageDown = pgdn; ctrl-v; shift-j;
+Enter = enter; l;
 Search = ctrl-s; alt-s
 Delete = f8; delete; shift-d;
 
