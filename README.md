@@ -16,9 +16,12 @@ Features:
   entered a command or not. So the clock, battery status and git indicator are
   always up to date.
 
+Demo of the ZSH prompt:
+![ZSH Prompt Demo](http://www.alpenwasser.net/emoticons/alpenwasser-zsh-prompt.gif)
+
+Still images:
 ![ZSH Prompt Charged](http://www.alpenwasser.net/images/2015-05-23--23-50-44--prompt.png)
 ![ZSH Prompt Discharging](http://www.alpenwasser.net/images/2015-05-23--23-51-40--discharging.png)
-
 
 Midnight Commander
 ------------------
