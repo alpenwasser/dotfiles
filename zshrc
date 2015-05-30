@@ -1,4 +1,6 @@
-# The following lines were added by compinstall
+# ---------------------------------------------------------------------------- #
+# The following lines were added by compinstall                                #
+# ---------------------------------------------------------------------------- #
 
 zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
 zstyle ':completion:*' completions 1
@@ -7,24 +9,44 @@ zstyle ':completion:*' max-errors 2
 zstyle ':completion:*' prompt '%e'
 zstyle ':completion:*' substitute 1
 zstyle :compinstall filename '/home/of-1/.zshrc'
-
 autoload -Uz compinit
+autoload colors; colors
 compinit
-# End of lines added by compinstall
-# Lines configured by zsh-newuser-install
+
+# ---------------------------------------------------------------------------- #
+# Perl Stuff                                                                   #
+# ---------------------------------------------------------------------------- #
+
+PATH="/home/of-1/perl5/bin${PATH+:}${PATH}"
+export PATH
+PERL5LIB="/home/of-1/perl5/lib/perl5${PERL5LIB+:}${PERL5LIB}"
+export PERL5LIB
+PERL_LOCAL_LIB_ROOT="/home/of-1/perl5${PERL_LOCAL_LIB_ROOT+:}${PERL_LOCAL_LIB_ROOT}"
+export PERL_LOCAL_LIB_ROOT
+PERL_MB_OPT="--install_base \"/home/of-1/perl5\""; export PERL_MB_OPT
+PERL_MM_OPT="INSTALL_BASE=/home/of-1/perl5"; export PERL_MM_OPT
+
+# ---------------------------------------------------------------------------- #
+# The following lines were added by compinstall                                #
+# ---------------------------------------------------------------------------- #
 HISTFILE=~/.zshhist
 HISTSIZE=1000
 SAVEHIST=10000
+
 setopt appendhistory autocd extendedglob nomatch
 unsetopt beep notify
 bindkey -v
-# End of lines configured by zsh-newuser-install
 
-# Lines configured by user
+# ---------------------------------------------------------------------------- #
+# Lines Configured by User                                                     #
+# ---------------------------------------------------------------------------- #
 
 # Transparency
 # This requires a running compositing manager such as xcompmgr or similar
 # [ -n "$XTERM_VERSION" ] && transset-df -a >/dev/null
+
+# Timeout for continuously updating the prompt.
+TMOUT=1
 
 # EDITOR environment variable
 export EDITOR=vim
@@ -59,7 +81,10 @@ alias trm='transmission-remote'
 alias kbch='setxkbmap -layout ch'
 alias kbus='setxkbmap -layout us'
 
-# sourcing custom scripts
+
+# ---------------------------------------------------------------------------- #
+# Source Custome Scripts                                                       #
+# ---------------------------------------------------------------------------- #
 source ~/host/bin/notes.sh
 source ~/host/bin/filecount.sh
 source ~/host/bin/cpf.sh
@@ -67,13 +92,16 @@ source ~/host/bin/man-color.sh
 source ~/.zshrc.private
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# SSH Agent
-#eval $(ssh-agent)
+
+# ---------------------------------------------------------------------------- #
+# Load SSH Keys                                                                #
+# ---------------------------------------------------------------------------- #
 eval $(keychain --eval --agents ssh -Q --quiet id_ecdsa id_rsa id_rsa_long)
 
-# Functions
 
-# Add autocompletion for SSH hosts based on known hosts
+# ---------------------------------------------------------------------------- #
+# Add autocompletion for SSH hosts based on known hosts                        #
+# ---------------------------------------------------------------------------- #
 zstyle -e \
     ':completion::*:hosts'\
     hosts \
@@ -83,8 +111,30 @@ zstyle -e \
     xargs) $(grep \^Host ~/.ssh/config(N) | \
     cut -f2 -d\  2>/dev/null | xargs))'
 
-function git_prompt {
-    # Check if dir is inside a git repo
+
+# ---------------------------------------------------------------------------- #
+# Functions                                                                    #
+# ---------------------------------------------------------------------------- #
+
+TRAPALRM() {
+    
+    # ---------------------------------------------------- #
+    # This function makes the prompt update continuously.  #
+    # ---------------------------------------------------- #
+
+    precmd
+    zle reset-prompt
+}
+
+setopt extended_glob
+git_prompt() {
+
+    # ---------------------------------------------------- #
+    # Checks if we are inside a git repository, and if so, #
+    # outputs some info about it.                          #
+    # ---------------------------------------------------- #
+    
+    # Check if inside a repo
     if [ $(git rev-parse --is-inside-work-tree 2>>/dev/null) ];then
 
         # Grab git branch
@@ -110,7 +160,8 @@ function git_prompt {
     fi
 }
 
-function battery_status {
+
+battery_status() {
 
     # ---------------------------------------------------- #
     # Checks battery status and  outputs result. NOTE: The #
@@ -200,8 +251,10 @@ function battery_status {
 }
 
 
-# prompt configuration
-autoload colors; colors
+# ---------------------------------------------------------------------------- #
+# Prompt Configuration                                                         #
+# ---------------------------------------------------------------------------- #
+
 function precmd {
 
     GIT_STRING="$(git_prompt)"
@@ -282,14 +335,6 @@ function precmd {
 }
 
 
-# Continuously update the prompt
-TRAPALRM() {
-    precmd
-    zle reset-prompt
-}
-TMOUT=1
-
-setopt extended_glob
 
 preexec () {
     if [[ "$TERM" == "screen" ]]; then
@@ -305,7 +350,6 @@ setprompt () {
     # Need this so the prompt will work.
 
     setopt prompt_subst
-
 
     ###
     # See if we can use colors.
@@ -504,18 +548,7 @@ $PR_HBAR\
 $PR_SHIFT_OUT\
 $PR_NO_COLOUR '
 
-
-    #PS2='$PR_CYAN$PR_SHIFT_IN$PR_HBAR$PR_SHIFT_OUT\
-#$PR_BLUE$PR_SHIFT_IN$PR_HBAR$PR_SHIFT_OUT(\
-#$PR_LIGHT_GREEN%_$PR_BLUE)$PR_SHIFT_IN$PR_HBAR$PR_SHIFT_OUT\
-#$PR_CYAN$PR_SHIFT_IN$PR_HBAR$PR_SHIFT_OUT$PR_NO_COLOUR '
 }
 
+# Commenting this out as an experiment.
 setprompt
-# End of lines configured by user
-
-PATH="/home/of-1/perl5/bin${PATH+:}${PATH}"; export PATH;
-PERL5LIB="/home/of-1/perl5/lib/perl5${PERL5LIB+:}${PERL5LIB}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="/home/of-1/perl5${PERL_LOCAL_LIB_ROOT+:}${PERL_LOCAL_LIB_ROOT}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"/home/of-1/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/home/of-1/perl5"; export PERL_MM_OPT;
