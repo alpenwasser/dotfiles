@@ -85,12 +85,12 @@ alias kbus='setxkbmap -layout us'
 # ---------------------------------------------------------------------------- #
 # Source Custome Scripts                                                       #
 # ---------------------------------------------------------------------------- #
-source ~/host/bin/notes.sh
-source ~/host/bin/filecount.sh
-source ~/host/bin/cpf.sh
-source ~/host/bin/man-color.sh
-source ~/.zshrc.private
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+#source ~/host/bin/notes.sh
+#source ~/host/bin/filecount.sh
+#source ~/host/bin/cpf.sh
+#source ~/host/bin/man-color.sh
+#source ~/.zshrc.private
+#source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 
 # ---------------------------------------------------------------------------- #
