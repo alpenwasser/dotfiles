@@ -96,7 +96,7 @@ alias kbus='setxkbmap -layout us'
 # ---------------------------------------------------------------------------- #
 # Load SSH Keys                                                                #
 # ---------------------------------------------------------------------------- #
-eval $(keychain --eval --agents ssh -Q --quiet id_ecdsa id_rsa id_rsa_long)
+#eval $(keychain --eval --agents ssh -Q --quiet id_ecdsa id_rsa id_rsa_long)
 
 
 # ---------------------------------------------------------------------------- #
