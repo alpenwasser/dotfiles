@@ -457,24 +457,27 @@ endfunction
 " IDE Stuff
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-autocmd VimEnter * TlistOpen
-autocmd VimEnter * vertical resize 40
-autocmd VimEnter * wincmd p " move cursor to next buffer
-autocmd VimEnter * NERDTree
-autocmd VimEnter * vertical resize 40
-autocmd VimEnter * wincmd p
+" TODO: Toggle NERDTree
+"map <leader>n :NERDTree<CR>
 
-let g:NERDTreeWinPos = "right"
+autocmd VimEnter * TlistOpen
+autocmd VimEnter * vertical resize 44
+autocmd VimEnter * wincmd p " move cursor to next buffer
+"autocmd VimEnter * NERDTree
+"autocmd VimEnter * vertical resize 40
+"autocmd VimEnter * wincmd p
+
+"let g:NERDTreeWinPos = 'right'
 
 " autocmd BufEnter * NERDTreeMirror
 " autocmd TabEnter * NERDTreeMirror
 
 autocmd TabEnter * TlistOpen
-autocmd TabEnter * vertical resize 40
+autocmd TabEnter * vertical resize 44
 autocmd TabEnter * wincmd p
-autocmd TabEnter * NERDTree
-autocmd TabEnter * vertical resize 40
-autocmd TabEnter * wincmd p
+"autocmd TabEnter * NERDTree
+"autocmd TabEnter * vertical resize 40
+"autocmd TabEnter * wincmd p
 
 "set statusline+=%#warningmsg#
 "set statusline+=%{SyntasticStatuslineFlag()}
