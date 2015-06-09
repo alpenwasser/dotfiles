@@ -307,17 +307,17 @@ map 00 <HOME>
 " Remap <Esc> and save to 'jk'
 :imap jk <Esc>:w<CR>
 
-" Map hh to move left and not re-enter insert mode
-:imap hh <Esc>
+" Map hhh to move left and not re-enter insert mode
+:imap hhh <Esc>
 
-" Map jj to move left and re-enter insert mode
-:imap jj <Esc>i
+" Map jjj to move left and re-enter insert mode
+:imap jjj <Esc>i
 
-" Map kk to move right and re-enter insert mode
-:imap kk <Esc><right><right>i
+" Map kkk to move right and re-enter insert mode
+:imap kkk <Esc><right><right>i
 
-" Map kk to move right and not re-enter insert mode
-:imap ll <Esc><right><right>
+" Map lll to move right and not re-enter insert mode
+:imap lll <Esc><right><right>
 
 " Remap <Esc> to 'jl'
 :imap jl <Esc>
