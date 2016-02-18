@@ -1,0 +1,36 @@
+! -------------------------------------------------
+! file:		 ~/.Xdefaults
+! author:	of-1
+! modified: September 2012	
+! vim: nu:ai:si:et:ts=4:sw=4:ft=xdefaults
+!--------------------------------------------------
+
+!xterm---------------------------------------------
+xterm*background:	black
+xterm*foreground:	cyan
+xterm*vt100*geometry:		90x26
+xterm*cursorColor:  #8700AF
+xterm*scrollBar:    false
+!Default:
+!xterm*font:         -*-terminal-r-*-*-*-*-*-*-*-*-*-*
+
+!Alternative 0:
+!xterm*font:         -*-fixed-medium-r-*-*-18-*-*-*-*-*-iso8859-* -fa monospace -fs 10 &
+!xterm*faceName:     monospace
+
+!Alternative 1:
+!xterm*font:         -*-fixed-medium-r-*-*-18-*-*-*-*-*-iso8859-*
+!xterm*faceName:     monospace
+
+!Also Monospace, but smaller:
+xterm*faceName:     monospace:style=Regular:size=10
+
+!Terminus:
+!xterm*faceName:     Terminus:style=Regular:size=10
+xterm*faceSize:     11
+xterm*saveLines:    4000
+xterm*charClass:    33:48,35:48,37:48,43:48,45-47:48,64:48,95:48,126:48,35:48
+
+!supposedly, this disables bold fonts, but as of now, it is not working
+xterm*boldMode:     false
+xterm*allowBoldFonts:   false
