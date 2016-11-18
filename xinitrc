@@ -45,8 +45,8 @@ fi
 
 exec i3
 
-autocutsel -fork & 
-autocutsel -selection PRIMARY -fork &
+#autocutsel -fork & 
+#autocutsel -selection PRIMARY -fork &
 
 #exec xbindkeys &
 #xrandr --output eDP1 --scale .6667x.6667

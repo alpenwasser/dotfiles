@@ -46,7 +46,7 @@ bindkey -v
 # [ -n "$XTERM_VERSION" ] && transset-df -a >/dev/null
 
 # Timeout for continuously updating the prompt.
-TMOUT=1
+TMOUT=5
 
 # EDITOR environment variable
 export EDITOR=vim
@@ -76,21 +76,22 @@ alias ds='du -hs'
 alias less='less -N'
 alias grep='grep --color=auto'
 alias update='sudo pacman -Syu'
-alias vl='/usr/share/vim/vim74/macros/less.sh'
+alias vl='/usr/share/vim/vim80/macros/less.sh'
 alias trm='transmission-remote'
 alias kbch='setxkbmap -layout ch'
 alias kbus='setxkbmap -layout us'
+alias p2='pbzip2'
 
 
 # ---------------------------------------------------------------------------- #
 # Source Custome Scripts                                                       #
 # ---------------------------------------------------------------------------- #
-#source ~/host/bin/notes.sh
+source ~/host/bin/notes.sh
 #source ~/host/bin/filecount.sh
 #source ~/host/bin/cpf.sh
-#source ~/host/bin/man-color.sh
+source ~/host/bin/man-color.sh
 #source ~/.zshrc.private
-#source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 
 # ---------------------------------------------------------------------------- #
@@ -118,11 +119,11 @@ zstyle -e \
 
 TRAPALRM() {
     
-    # ---------------------------------------------------- #
-    # This function makes the prompt update continuously.  #
-    # ---------------------------------------------------- #
-
     precmd
+
+    # ------------------------------------------------------------ #
+    # This function makes the prompt update/refresh continuously.  #
+    # ------------------------------------------------------------ #
     zle reset-prompt
 }
 
@@ -178,7 +179,8 @@ battery_status() {
 	local battery_path='/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:5f/PNP0C09:00/ACPI0001:00/ACPI0002:00/power_supply/BAT0/uevent'
 	local utf_charging_symbol='⚇'
     local tty_charging_symbol='CHAR'
-	local utf_discharging_symbol='⚡'
+	#local utf_discharging_symbol='⚡'
+	local utf_discharging_symbol='↯'
 	local tty_discharging_symbol='BAT'
 	local utf_charged_symbol='☻'
 	local tty_charged_symbol='FULL'
@@ -257,6 +259,21 @@ battery_status() {
 
 function precmd {
 
+    #FREQ_STRING="$(< /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq)"
+    #((FREQ_STRING = FREQ_STRING / 1000))
+    FREQ_STRING="$(< /proc/cpuinfo | grep MHz | head -n 1 | awk '{print $4}' | sed 's/\(.*\)\..*$/\1/')"
+    FREQ_STRING="${FREQ_STRING} "
+
+    # meminfo units are in KiB
+    MEM_TOTAL="$(< /proc/meminfo | grep MemTotal | awk '{print $2}')"
+    MEM_FREE="$(< /proc/meminfo | grep MemAvailable | awk '{print $2}')"
+    # We need to initialize MEM_USED is a string, otherwise ZSH will
+    # treat it as a number when formatting later.
+    MEM_USED='' 
+    #(( MEM_USED = (MEM_TOTAL - MEM_FREE) / 1024 )) # Will be in MiB
+    (( MEM_USED = (MEM_TOTAL - MEM_FREE) * 100 / MEM_TOTAL ))
+    MEM_USED="${MEM_USED}%% " # NOTE: '%%' counts as two chars in ${#MEM_USED}
+
     GIT_STRING="$(git_prompt)"
 
     BATTERY_STRING="$(battery_status)" 
@@ -310,6 +327,10 @@ function precmd {
             (( leftbotboxsize = leftbotboxsize - 13 ))
         fi
     fi
+
+    # Substract 1 at the end because '%%' gets counted as two characters
+    # in the string length expression, but is only displayed as '%'
+    ((leftbotboxsize = ${leftbotboxsize} + ${#FREQ_STRING} + ${#MEM_USED} - 1))
 
     if [[ "${#BATTERY_STRING}" != 0 ]];then
         # Subtract 9 for colors
@@ -515,9 +536,12 @@ $PR_HBAR\
 $PR_LRCORNER\
 $PR_SHIFT_OUT\
 $PR_NO_COLOUR\
-%(!.$PR_NORMAL_WHITE.$PR_NORMAL_RED) %* \
+%(!.$PR_NORMAL_WHITE.$PR_NORMAL_CYAN) %* \
 $GIT_STRING\
 $PR_NO_COLOUR\
+$PR_NORMAL_CYAN\
+$FREQ_STRING\
+$MEM_USED\
 $BATTERY_STRING\
 $PR_BOX_COLOR\
 $PR_SHIFT_IN\
@@ -547,7 +571,6 @@ $PR_HBAR\
 $PR_HBAR\
 $PR_SHIFT_OUT\
 $PR_NO_COLOUR '
-
 }
 
 # Commenting this out as an experiment.
