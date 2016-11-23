@@ -225,97 +225,6 @@ git_prompt() {
 }
 
 
-battery_status() {
-
-    # ---------------------------------------------------- #
-    # Checks battery status and  outputs result. NOTE: The #
-    # path  to the  uevent file  for the  battery on  your #
-    # laptop might need to be adjusted for this.           #
-    #                                                      #
-    # How  to  find your  battery,  one  of the  following #
-    # commands should get you  started on the right track: #
-    # find  /sys/devices  -type  d  -iname  \*BAT0\*       #
-    # find /sys/devices -type f -iname \*power_supply\*    #
-    # ---------------------------------------------------- #
-
-    local battery_string=''
-	local battery_path='/sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:5f/PNP0C09:00/ACPI0001:00/ACPI0002:00/power_supply/BAT0/uevent'
-	local utf_charging_symbol='⚇'
-    local tty_charging_symbol='CHAR'
-	#local utf_discharging_symbol='⚡'
-	local utf_discharging_symbol='↯'
-	local tty_discharging_symbol='BAT'
-	local utf_charged_symbol='☻'
-	local tty_charged_symbol='FULL'
-    local charging_symbol=''
-    local discharging_symbol=''
-    local charged_symbol=''
-
-    if [[ $TERM == 'linux' ]];then
-        charging_symbol=$tty_charging_symbol
-        discharging_symbol=$tty_discharging_symbol
-        charged_symbol=$tty_charged_symbol
-    else
-        charging_symbol=$utf_charging_symbol
-        discharging_symbol=$utf_discharging_symbol
-        charged_symbol=$utf_charged_symbol
-    fi
-
-    local power_supply_status='' # can be 'Discharging', 'Full' or 'Charging'
-    local power_supply_charge_full=''
-    local power_supply_charge_now=''
-    local power_supply_current_now=''
-    local battery_percentage=''
-
-    # No battery present
-    # TODO: Take into account swappable batteries
-    if [[ $battery_path == '' ]];then
-        return
-    fi
-
-    # Grab status:
-    power_supply_status="$(grep 'POWER_SUPPLY_STATUS=' < "$battery_path")" 
-    power_supply_charge_full="$(grep 'POWER_SUPPLY_CHARGE_FULL=' < "$battery_path")" 
-    power_supply_charge_now="$(grep 'POWER_SUPPLY_CHARGE_NOW=' < "$battery_path")" 
-
-    # Cut off unnecessary string parts from front:
-    power_supply_status="${power_supply_status#*=}"
-    power_supply_charge_full="${power_supply_charge_full#*=}"
-    power_supply_charge_now="${power_supply_charge_now#*=}"
-
-    # The numbers we get from  the uevent file are integers,
-    # we must convert them to  floating point first lest ZSH
-    # do integer math for the percentage calculations.
-    power_supply_charge_now="${power_supply_charge_now}."
-    power_supply_charge_full="${power_supply_charge_full}."
-    ((battery_percentage = power_supply_charge_now / power_supply_charge_full * 100))
-    battery_percentage=${battery_percentage%\.*}
-
-    case "${power_supply_status}" in
-        Full)
-            battery_string=" ${PR_LIGHT_GREEN}${charged_symbol}"
-            ;;
-        Discharging)
-            if [[ $battery_percentage < 20 ]];then
-                battery_string=" ${PR_LIGHT_RED}${discharging_symbol}"
-            else
-                battery_string=" ${PR_LIGHT_YELLOW}${discharging_symbol}"
-            fi
-            ;;
-        Charging)
-            battery_string=" ${PR_LIGHT_YELLOW}${charging_symbol}"
-            ;;
-        *)
-            return
-            ;;
-    esac
-
-    battery_string="${battery_string} ${battery_percentage}%%"
-
-    echo "${battery_string}"
-}
-
-
 # ---------------------------------------------------------------------------- #
 # Prompt Configuration                                                         #
 # ---------------------------------------------------------------------------- #
@@ -350,8 +259,6 @@ function precmd {
 
     GIT_STRING="$(git_prompt)"
 
-    BATTERY_STRING="$(battery_status)" 
-
     local TERMWIDTH
     #COLUMNS is env variable
     (( TERMWIDTH = ${COLUMNS} - 1 ))
@@ -372,7 +279,6 @@ function precmd {
     # %~: current working dir relative to user's home dir
     # figure out the length of this construct
     local promptsize=${#${(%):---( %D{%a %b %d %y}%n @ %m)---()--}}
-    #local righttopboxsize=${#${(%):- ${BATTERY_STRING}%D{%a %b %d %y}%n @ %m}}
     local pwdsize=${#${(%):-%~}}
     local righttopboxsize=${#${(%):- %D{%a %b %d %y}%n @ %m}}
     local leftbotboxsize=${#${(%):- %* }}
@@ -405,12 +311,6 @@ function precmd {
     # Substract 1 at the end because '%%' gets counted as two characters
     # in the string length expression, but is only displayed as '%'
     ((leftbotboxsize = ${leftbotboxsize} + ${#FREQ_STRING} + ${#MEM_USED} - 1))
-
-    if [[ "${#BATTERY_STRING}" != 0 ]];then
-        # Subtract 9 for colors
-        ((leftbotboxsize = ${leftbotboxsize} + ${#BATTERY_STRING} - 9))
-        BATTERY_STRING="${BATTERY_STRING} "
-    fi
 
     if [[ "$promptsize + $pwdsize" -gt $TERMWIDTH ]]; then
 	    ((PR_PWDLEN=$TERMWIDTH - $promptsize))
@@ -616,7 +516,6 @@ $PR_NO_COLOUR\
 $PR_NORMAL_CYAN\
 $FREQ_STRING\
 $MEM_USED\
-$BATTERY_STRING\
 $PR_BOX_COLOR\
 $PR_SHIFT_IN\
 $PR_LLCORNER\
