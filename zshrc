@@ -33,7 +33,8 @@ HISTFILE=~/.zshhist
 HISTSIZE=1000
 SAVEHIST=10000
 
-setopt appendhistory autocd extendedglob nomatch
+setopt autocd extendedglob nomatch
+setopt APPEND_HISTORY
 unsetopt beep notify
 bindkey -v
 
@@ -45,19 +46,30 @@ bindkey -v
 # This requires a running compositing manager such as xcompmgr or similar
 # [ -n "$XTERM_VERSION" ] && transset-df -a >/dev/null
 
-# Timeout for continuously updating the prompt.
+# ---------------------------------------------------------------------------- #
+# Timeout for continuously updating the prompt.                                #
+# ---------------------------------------------------------------------------- #
 TMOUT=5
 
-# EDITOR environment variable
+# ---------------------------------------------------------------------------- #
+# EDITOR environment variable                                                  #
+# ---------------------------------------------------------------------------- #
 export EDITOR=vim
 
-# FIM Image viewer
+# ---------------------------------------------------------------------------- #
+# FIM Image viewer                                                             #
+# ---------------------------------------------------------------------------- #
 export FBFONT=/usr/share/kbd/consolefonts/ter-216n.psf.gz
 
-# autocomplete for aliases
+
+# ---------------------------------------------------------------------------- #
+# Autocomplete for Aliases                                                     #
+# ---------------------------------------------------------------------------- #
 setopt completealiases
 
-# aliases
+# ---------------------------------------------------------------------------- #
+# Aliases                                                                      #
+# ---------------------------------------------------------------------------- #
 alias sudo='sudo '
 alias ls='ls --color=auto --group-directories-first'
 alias lsa='ls -a --color=auto --group-directories-first'
@@ -70,34 +82,33 @@ alias pacr='sudo pacman -Rns'
 alias pacrd='sudo pacman -Rd'
 alias rmr='rm -r'
 alias hddtemp='sudo hddtemp'
-alias vpne='sudo vpnc ethz'
-alias vpnd='sudo vpnc-disconnect'
 alias ds='du -hs'
 alias less='less -N'
 alias grep='grep --color=auto'
-alias update='sudo pacman -Syu'
 alias vl='/usr/share/vim/vim80/macros/less.sh'
 alias trm='transmission-remote'
 alias kbch='setxkbmap -layout ch'
 alias kbus='setxkbmap -layout us'
+alias kbX='xmodmap ~/.Xmodmap'
 alias p2='pbzip2'
 
 
 # ---------------------------------------------------------------------------- #
-# Source Custome Scripts                                                       #
+# Source Custom Scripts                                                        #
 # ---------------------------------------------------------------------------- #
 source ~/host/bin/notes.sh
+source ~/host/bin/man-color.sh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+#source ~/.zshrc.private
 #source ~/host/bin/filecount.sh
 #source ~/host/bin/cpf.sh
-source ~/host/bin/man-color.sh
-#source ~/.zshrc.private
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 
 # ---------------------------------------------------------------------------- #
 # Load SSH Keys                                                                #
 # ---------------------------------------------------------------------------- #
 #eval $(keychain --eval --agents ssh -Q --quiet id_ecdsa id_rsa id_rsa_long)
+eval $(keychain --eval --agents ssh -Q --quiet id_rsa_long)
 
 
 # ---------------------------------------------------------------------------- #
@@ -117,14 +128,66 @@ zstyle -e \
 # Functions                                                                    #
 # ---------------------------------------------------------------------------- #
 
-TRAPALRM() {
-    
-    precmd
+cnt() {
+    # ---------------------------------------------------- #
+    # Counts files in a directory                          #
+    # ---------------------------------------------------- #
+    printf '%s:\t%s files\n' "$1" $(find "$1" -type f | wc -l)
+}
 
-    # ------------------------------------------------------------ #
-    # This function makes the prompt update/refresh continuously.  #
-    # ------------------------------------------------------------ #
-    zle reset-prompt
+st() {
+    # ---------------------------------------------------- #
+    # General stats on a directory                         #
+    # ---------------------------------------------------- #
+    # Number of files                                      #
+    # Number of directories                                #
+    # Depth of directory tree                              #
+    # Total size of directory                              #
+    # ---------------------------------------------------- #
+
+    local filecount=$(find "$1" -type f | wc -l)
+    local dircount=$(find "$1" -type d | wc -l)
+    local size=$(du -s "$1"|awk '{print $1}')
+    local unit
+    if [[ ${#size}  -gt 6 ]];then
+        ((size = size/(1024*1024)))
+        unit='GiB'
+    elif [[ ${#size} -gt 3 ]];then
+        ((size = size/(1024)))
+        unit='MiB'
+    else 
+        unit='KiB'
+    fi
+    local depth_search=$(find "$1" -type d -printf '%d\t%p\n' | sort -n | tail -1)
+    local depth=$(awk '{print $1}' <<< "$depth_search")
+    local depth_name=$(awk '{print $2}' <<< "$depth_search")
+
+    printf 'File count:      %20d\n' "$filecount"
+    printf 'Directory count: %20d\n' "$dircount"
+    printf 'Size:            %20d %s\n' "$size" "$unit"
+    printf 'Tree Depth:      %20d\n' "$depth"
+    printf 'Deepest directory: %s\n' "$depth_name"
+}
+
+xinp() {
+    # ---------------------------------------------------- #
+    # Change  xinput  properties  for a  device.   Usually #
+    # used   for   setting  mouse   sensitivity.   source: #
+    # http://unix.stackexchange.com/questions/90572/       #
+    # ---------------------------------------------------- #
+    local device
+    local property
+    local value
+
+    xinput list
+    printf 'Enter descriptor of device for which to list properties: '
+    read device
+    xinput list-props "$device"
+    printf 'Enter number of property to modify: '
+    read property
+    printf 'Enter value for property: '
+    read value
+    xinput set-prop "$device" "$property" "$value"
 }
 
 setopt extended_glob
@@ -143,7 +206,7 @@ git_prompt() {
 
         # Check if uncommitted changes have been made on current branch.
         if [[ $(git status --porcelain -z 2>>/dev/null) != '' ]];then
-            ref="${ref} ${PR_RED}+"
+            ref="${ref}${PR_RED}+"
         fi
 
         # Don't put any funny symbols into TTY
@@ -257,21 +320,32 @@ battery_status() {
 # Prompt Configuration                                                         #
 # ---------------------------------------------------------------------------- #
 
+TRAPALRM() {
+    
+    precmd
+
+    # ------------------------------------------------------------ #
+    # This function makes the prompt update/refresh continuously.  #
+    # ------------------------------------------------------------ #
+    zle reset-prompt
+}
+
 function precmd {
 
-    #FREQ_STRING="$(< /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq)"
-    #((FREQ_STRING = FREQ_STRING / 1000))
     FREQ_STRING="$(< /proc/cpuinfo | grep MHz | head -n 1 | awk '{print $4}' | sed 's/\(.*\)\..*$/\1/')"
     FREQ_STRING="${FREQ_STRING} "
 
     # meminfo units are in KiB
     MEM_TOTAL="$(< /proc/meminfo | grep MemTotal | awk '{print $2}')"
     MEM_FREE="$(< /proc/meminfo | grep MemAvailable | awk '{print $2}')"
-    # We need to initialize MEM_USED is a string, otherwise ZSH will
-    # treat it as a number when formatting later.
+
+    # ---------------------------------------------------- #
+    # We  need   to  initialize  MEM_USED  is   a  string, #
+    # otherwise  ZSH  will  treat  it  as  a  number  when #
+    # formatting later.                                    #
+    # ---------------------------------------------------- #
     MEM_USED='' 
-    #(( MEM_USED = (MEM_TOTAL - MEM_FREE) / 1024 )) # Will be in MiB
-    (( MEM_USED = (MEM_TOTAL - MEM_FREE) * 100 / MEM_TOTAL ))
+    (( MEM_USED = (MEM_TOTAL - MEM_FREE) * 100 / MEM_TOTAL )) # in percentage
     MEM_USED="${MEM_USED}%% " # NOTE: '%%' counts as two chars in ${#MEM_USED}
 
     GIT_STRING="$(git_prompt)"
@@ -573,5 +647,4 @@ $PR_SHIFT_OUT\
 $PR_NO_COLOUR '
 }
 
-# Commenting this out as an experiment.
 setprompt
