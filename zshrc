@@ -91,6 +91,7 @@ alias kbch='setxkbmap -layout ch'
 alias kbus='setxkbmap -layout us'
 alias kbX='xmodmap ~/.Xmodmap'
 alias p2='pbzip2'
+alias dt='date +%Y-%m-%d--%H-%M-%S'
 
 
 # ---------------------------------------------------------------------------- #
