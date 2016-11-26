@@ -129,6 +129,45 @@ zstyle -e \
 # Functions                                                                    #
 # ---------------------------------------------------------------------------- #
 
+_pdfcomplete() {
+    # ---------------------------------------------------- #
+	# Autocomplete function for pdf files in PWD           #
+    # ---------------------------------------------------- #
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    COMPREPLY=( $(compgen -W "$(find -type f -iname '*.pdf' -printf '%P\n')" -- $cur) )
+}
+
+ev() {
+    evince "$1" 2>/dev/null &
+}
+
+px() {
+	pdf-xchange "$1" 2>/dev/null &
+}
+
+complete -F _pdfcomplete ev
+complete -F _pdfcomplete px
+
+
+_texcomplete() {
+    # ---------------------------------------------------- #
+	# Autocomplete function for tex files in PWD           #
+    # ---------------------------------------------------- #
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    COMPREPLY=( $(compgen -W "$(find -type f -iname '*.tex' -printf '%P\n')" -- $cur) )
+}
+
+te() {
+    # ---------------------------------------------------- #
+	# te for "TeX Edit"                                    #
+    # ---------------------------------------------------- #
+	vim "$1"
+}
+
+#TODO: ter() for recursive, te() for top-level completion in PWD
+
+complete -F _texcomplete te
+
 cnt() {
     # ---------------------------------------------------- #
     # Counts files in a directory                          #
