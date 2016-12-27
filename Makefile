@@ -1,6 +1,14 @@
-# By default, don't do anything dangerous
+# -------------------------------------------------------- #
+# By default, don't do anything dangerous                  #
+# -------------------------------------------------------- #
 .DEFAULT_GOAL := sync
 
+# -------------------------------------------------------- #
+# Copy configuration  of current machine into  the dotfile #
+# repository. This is the default target so that we do not #
+# accidentally overwrite the machine's config or something #
+# silly like that.                                         #
+# -------------------------------------------------------- #
 sync:
 	mkdir -p config/mc
 	mkdir -p local/share/mc/skins
@@ -23,6 +31,11 @@ sync:
 	#cp ~/.pentadactylrc pentadactylrc
 	#cp ~/.pentadactyl -r pentadactyl/
 
+# -------------------------------------------------------- #
+# Install Everything, Everywhere.                          #
+# Overwrites  any existing  configuration which  currently #
+# resides on the machine.                                  #
+# -------------------------------------------------------- #
 install:
 	mkdir -p ~/.config/mc
 	mkdir -p ~/.local/share/mc
@@ -43,6 +56,9 @@ install:
 	#cp pentadactylrc ~/.pentadactylrc
 	#cp -r pentadactyl/ ~/.pentadactyl
 
+# -------------------------------------------------------- #
+# Target for Vim                                           #
+# -------------------------------------------------------- #
 tvim:
 	mkdir -p ~/.vim
 	cp -r vim/* ~/.vim
