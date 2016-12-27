@@ -2,7 +2,7 @@
 " vimrc                                                                        "
 " ============================================================================ "
 "
-"  Author: alpenwasser
+"  Author: alpenwasser, webmaster@alpenwasser.net
 "  Date: December 2016
 
 " ---------------------------------------------------------------------------- "
@@ -25,7 +25,12 @@ Plugin 'troydm/easytree.vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'ervandew/matchem'
-Plugin 'tomtom/tcomment_vim'
+"Plugin 'tomtom/tcomment_vim'
+Plugin 'terryma/vim-smooth-scroll'
+Plugin 'machakann/vim-highlightedyank'
+Plugin 'terryma/vim-multiple-cursors'
+Bundle 'matze/vim-move'
+Plugin 'unblevable/quick-scope'
 
 
 call vundle#end()            " required
@@ -46,8 +51,8 @@ set smartcase
 set hlsearch
 set incsearch
 set magic
-" Set UNIX as standard file type ------------------------- "
 set ffs=unix,dos,mac
+map y <Plug>(highlightedyank)
 
 " No annoying sound on errors
 set noerrorbells
@@ -62,6 +67,7 @@ autocmd BufReadPost *
      \ endif
 " Remember info about open buffers on close -------------- "
 set viminfo^=%
+
 
 " ---------------------------------------------------------------------------- "
 " User Interface                                                               "
@@ -90,9 +96,7 @@ map <space>e :EasyTreeToggle<cr>
 
 " Airline Configuration
 let g:airline#extensions#tabline#enabled = 1
-
-" Minimap
-map <leader>m :MinimapToggle<cr>
+let g:airline_theme='kalisi'
 
 " Set GVim Font ------------------------------------------ "
 if has("gui_running")
@@ -103,11 +107,12 @@ if has("gui_running")
   endif
 endif
 
+
 " ---------------------------------------------------------------------------- "
 " Keyboard Shortcuts                                                           "
 " ---------------------------------------------------------------------------- "
-let mapleader   = ";"
-let g:mapleader = ";"
+let mapleader   = "'"
+let g:mapleader = "'"
 
 " Movement ---------------------------------------------- "
 " Move to first non-blank character on line
@@ -120,8 +125,8 @@ map k gk
 " Wrapping long lines or not
 map <leader>nw :set nowrap!<CR>
 " PageUp/PageDown
-map <Space>f <PageDown>
-map <Space>d <PageUp>
+map <Space>f :call smooth_scroll#down(&scroll, 10, 2)<CR>
+map <Space>d :call smooth_scroll#up(&scroll, 10, 2)<CR>
 
 " Split a line into two lines before cursor position ----- "
 " Source: http://stackoverflow.com/questions/624821/vim-split-line-command
@@ -155,6 +160,13 @@ vmap <leader>f :!par -ejgw60T4<CR>
 " Toggle paste mode ON and OFF --------------------------- "
 nmap <leader>pp :setlocal paste!<cr>
 
+" Vim-Multiple-Cursors ----------------------------------- "
+let g:multi_cursor_use_default_mapping=0
+let g:multi_cursor_next_key='<C-n>'
+let g:multi_cursor_prev_key='<C-p>'
+let g:multi_cursor_skip_key='<C-x>'
+let g:multi_cursor_quit_key='<C-l>'
+
 
 " ---------------------------------------------------------------------------- "
 " Coding                                                                       "
@@ -165,6 +177,9 @@ set expandtab
 set ai   "Auto indent
 set si   "Smart indent
 set wrap "Wrap lines
+set sw=4
+set ts=4
+
 
 if has("autocmd")
     filetype on
@@ -184,13 +199,11 @@ if has("autocmd")
     autocmd FileType perl   setlocal ts=8 sts=8 sw=8 noexpandtab
     autocmd FileType python setlocal ts=4 sts=4 sw=4 expandtab
     autocmd FileType json   setlocal ts=8 sts=8 sw=8 expandtab
+    autocmd FileType tex    setlocal ts=4 sts=4 sw=4 expandtab
 endif
 
 " General ------------------------------------------------ "
 nmap <Space>m :!make<CR>
-
-set sw=4
-set ts=4
 
 " LaTeX -------------------------------------------------- "
 function! Umlauts()
@@ -204,7 +217,7 @@ endfunction
 
 
 " ---------------------------------------------------------------------------- "
-" Buffers, Tabs etc.
+" Buffers, Splits, Tabs etc.
 " ---------------------------------------------------------------------------- "
 
 set splitright
@@ -248,3 +261,15 @@ function! <SID>BufcloseCloseIt()
      execute("bdelete! ".l:currentBufNum)
    endif
 endfunction
+
+
+" ---------------------------------------------------------------------------- "
+" Crap Which Has To Be At The End Or Else Shit Will Break
+" ---------------------------------------------------------------------------- "
+set cursorline
+nmap <leader>c :set cursorline! cursorcolumn!<cr>
+nmap <leader>cl :set cursorline!<cr>
+nmap <leader>cc :set cursorcolumn!<cr>
+
+
+map <leader>m :MinimapToggle<cr>
