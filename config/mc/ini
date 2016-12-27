@@ -85,6 +85,8 @@ skin=darkened
 
 filepos_max_saved_entries=1024
 
+editor_state_full_filename=0
+
 [Layout]
 message_visible=1
 keybar_visible=1
@@ -95,7 +97,7 @@ menubar_visible=1
 free_space=1
 horizontal_split=0
 vertical_equal=1
-left_panel_size=118
+left_panel_size=119
 horizontal_equal=1
 top_panel_size=1
 
@@ -115,12 +117,14 @@ base_color=
 screen=
 color_terminals=
 
+screen-256color=
+
 [Panels]
 show_mini_info=true
 kilobyte_si=false
 mix_all_files=false
 show_backups=true
-show_dot_files=true
+show_dot_files=false
 fast_reload=false
 fast_reload_msg_shown=false
 mark_moves_down=true
@@ -136,6 +140,8 @@ quick_search_mode=2
 select_flags=6
 
 simple_swap=false
+
+panel_scroll_center=false
 
 [Panelize]
 Find *.orig after patching=find . -name \\*.orig -print

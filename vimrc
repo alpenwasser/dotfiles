@@ -31,6 +31,9 @@ Plugin 'machakann/vim-highlightedyank'
 Plugin 'terryma/vim-multiple-cursors'
 Bundle 'matze/vim-move'
 Plugin 'unblevable/quick-scope'
+"Plugin 'sjurgemeyer/vim-tabspace'
+"Plugin 'ScreenShot'
+"Plugin 'google/vim-syncopate'
 
 
 call vundle#end()            " required
@@ -73,8 +76,12 @@ set viminfo^=%
 " User Interface                                                               "
 " ---------------------------------------------------------------------------- "
 
-colorscheme gruvbox
-set background=dark
+if has("gui_running")
+    colorscheme corporation
+else
+    colorscheme gruvbox
+    set background=dark
+endif
 
 set tw=1024
 set ruler
@@ -185,7 +192,7 @@ if has("autocmd")
     filetype on
 
     " These filetypes are fussy about indentation
-    autocmd FileType make setlocal ts=8 sts=4 sw=8 noexpandtab
+    autocmd FileType make setlocal ts=4 sts=4 sw=4 noexpandtab
     autocmd FileType yaml setlocal ts=4 sts=4 sw=4 expandtab
 
     " Personal Preferences

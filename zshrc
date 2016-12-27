@@ -13,6 +13,10 @@ autoload -Uz compinit
 autoload colors; colors
 compinit
 
+if [[ $TERM == 'screen' ]];then
+    export TERM='screen-256color'
+fi
+
 # ---------------------------------------------------------------------------- #
 # Perl Stuff                                                                   #
 # ---------------------------------------------------------------------------- #
@@ -31,7 +35,7 @@ PERL_MM_OPT="INSTALL_BASE=/home/of-1/perl5"; export PERL_MM_OPT
 # ---------------------------------------------------------------------------- #
 HISTFILE=~/.zshhist
 HISTSIZE=1000
-SAVEHIST=10000
+SAVEHIST=100000
 
 setopt autocd extendedglob nomatch
 setopt APPEND_HISTORY
@@ -92,6 +96,7 @@ alias kbus='setxkbmap -layout us'
 alias kbX='xmodmap ~/.Xmodmap'
 alias p2='pbzip2'
 alias dt='date +%Y-%m-%d--%H-%M-%S'
+alias gv='gvim'
 
 
 # ---------------------------------------------------------------------------- #
@@ -161,7 +166,7 @@ te() {
     # ---------------------------------------------------- #
 	# te for "TeX Edit"                                    #
     # ---------------------------------------------------- #
-	vim "$1"
+	gvim "$1"
 }
 
 #TODO: ter() for recursive, te() for top-level completion in PWD
