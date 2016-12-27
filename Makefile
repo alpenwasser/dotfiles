@@ -24,10 +24,14 @@ sync:
 	#cp ~/.pentadactyl -r pentadactyl/
 
 install:
-	cp -r config/mc ~/.config/mc
-	cp -r i3/ ~/.i3
-	cp -r local/share/mc ~/.local/share/mc
-	cp -r vim/ ~/.vim
+	mkdir -p ~/.config/mc
+	mkdir -p ~/.local/share/mc
+	mkdir -p ~/.i3
+	mkdir -p ~/.vim
+	cp -r config/mc/* ~/.config/mc
+	cp -r local/share/mc/* ~/.local/share/mc
+	cp -r i3/* ~/.i3
+	cp -r vim/* ~/.vim
 	cp  bashrc ~/.bashrc
 	cp  tmux.conf ~/.tmux.conf
 	cp  vimrc ~/.vimrc
@@ -39,6 +43,7 @@ install:
 	#cp pentadactylrc ~/.pentadactylrc
 	#cp -r pentadactyl/ ~/.pentadactyl
 
-vim:
-	cp -r vim ~/.vim
+tvim:
+	mkdir -p ~/.vim
+	cp -r vim/* ~/.vim
 	cp vimrc ~/.vimrc
