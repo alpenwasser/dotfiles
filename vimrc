@@ -108,9 +108,9 @@ let g:airline_theme='kalisi'
 " Set GVim Font ------------------------------------------ "
 if has("gui_running")
     if has("gui_gtk2")
-        set guifont=Source\ Code\ Pro\ for\ Powerline\ Regular\ 12
+        set guifont=Source\ Code\ Pro\ for\ Powerline\ Regular\ 11
     elseif has("gui_gtk3")
-        set guifont=Source\ Code\ Pro\ for\ Powerline\ Regular\ 12
+        set guifont=Source\ Code\ Pro\ for\ Powerline\ Regular\ 11
   endif
 endif
 
