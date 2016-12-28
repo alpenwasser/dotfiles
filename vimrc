@@ -118,8 +118,8 @@ endif
 " ---------------------------------------------------------------------------- "
 " Keyboard Shortcuts                                                           "
 " ---------------------------------------------------------------------------- "
-let mapleader   = "'"
-let g:mapleader = "'"
+let mapleader   = ";"
+let g:mapleader = ";"
 
 " Movement ---------------------------------------------- "
 " Move to first non-blank character on line
@@ -173,6 +173,10 @@ let g:multi_cursor_next_key='<C-n>'
 let g:multi_cursor_prev_key='<C-p>'
 let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<C-l>'
+
+
+" Because leader has been mapped to ;, remap it to ' ----- "
+nnoremap ' ;
 
 
 " ---------------------------------------------------------------------------- "
