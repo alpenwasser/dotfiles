@@ -3,7 +3,7 @@
 " ============================================================================ "
 "
 "  Author: alpenwasser, webmaster@alpenwasser.net
-"  Date: December 2016
+"  Date: December 2016 and onwards
 
 " ---------------------------------------------------------------------------- "
 " Vundle                                                                       "
@@ -31,6 +31,7 @@ Plugin 'machakann/vim-highlightedyank'
 Plugin 'terryma/vim-multiple-cursors'
 Bundle 'matze/vim-move'
 Plugin 'unblevable/quick-scope'
+"Plugin 'Valloric/YouCompleteMe'
 "Plugin 'sjurgemeyer/vim-tabspace'
 "Plugin 'ScreenShot'
 "Plugin 'google/vim-syncopate'
@@ -38,6 +39,13 @@ Plugin 'unblevable/quick-scope'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
+
+
+" ---------------------------------------------------------------------------- "
+" Other Plugin Stuff (Non-Vundle))                                             "
+" ---------------------------------------------------------------------------- "
+let g:ycm_global_ycm_extra_conf = '/usr/share/vim/vimfiles/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+let g:ycm_server_python_interpreter = '/usr/bin/python2'
 
 
 " ---------------------------------------------------------------------------- "
@@ -212,6 +220,9 @@ if has("autocmd")
     autocmd FileType json   setlocal ts=8 sts=8 sw=8 expandtab
     autocmd FileType tex    setlocal ts=4 sts=4 sw=4 expandtab
 endif
+
+" Force Syntax Highlighting for LaTeX Class Files -------- "
+au BufReadPost *.cls set filetype=tex
 
 " General ------------------------------------------------ "
 nmap <Space>m :!make<CR>
