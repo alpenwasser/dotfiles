@@ -18,23 +18,25 @@ call vundle#begin()
 "call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
-"Plugin 'VundleVim/Vundle.vim'
-Plugin 'severin-lemaignan/vim-minimap'
+Plugin 'VundleVim/Vundle.vim'
+"Plugin 'severin-lemaignan/vim-minimap'
 Plugin 'jlanzarotta/bufexplorer'
 Plugin 'troydm/easytree.vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'ervandew/matchem'
+"Plugin 'ervandew/matchem'
 "Plugin 'tomtom/tcomment_vim'
 Plugin 'terryma/vim-smooth-scroll'
 Plugin 'machakann/vim-highlightedyank'
 Plugin 'terryma/vim-multiple-cursors'
 Bundle 'matze/vim-move'
-Plugin 'unblevable/quick-scope'
-"Plugin 'Valloric/YouCompleteMe'
+"Plugin 'unblevable/quick-scope'
 "Plugin 'sjurgemeyer/vim-tabspace'
 "Plugin 'ScreenShot'
 "Plugin 'google/vim-syncopate'
+Bundle 'ervandew/supertab'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
 
 
 call vundle#end()            " required
@@ -42,10 +44,20 @@ filetype plugin indent on    " required
 
 
 " ---------------------------------------------------------------------------- "
-" Other Plugin Stuff (Non-Vundle))                                             "
+" Other Plugin Stuff (Non-Vundle)                                              "
 " ---------------------------------------------------------------------------- "
 let g:ycm_global_ycm_extra_conf = '/usr/share/vim/vimfiles/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 let g:ycm_server_python_interpreter = '/usr/bin/python2'
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+
+let g:SuperTabDefaultCompletionType = '<C-n>'
+
+let g:UltiSnipsExpandTrigger="<s-cr>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+"let g:SuperTabCrMapping = 0
 
 
 " ---------------------------------------------------------------------------- "
