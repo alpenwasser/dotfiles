@@ -77,8 +77,17 @@ alias rmr='rm -r'
 # -------------------------------------------------------------------------- #
 #                                                                  Functions #
 # -------------------------------------------------------------------------- #
+
+#                                         Convenient pdf viewing with evince #
 function ev
     evince "$argv" &
 end
 complete -c ev -x -a "(find . -maxdepth 2 -iname '*pdf' -printf '%P\n')"
 #complete -c ev -x -a "(__fish_complete_suffix .pdf)"
+
+#                                                                Keybindings #
+# https://superuser.com/questions/409594/
+# /usr/share/fish/functions/fish_vi_key_bindings.fish, line 132
+function fish_user_key_bindings
+    bind -M insert \cf 'accept-autosuggestion'
+end
