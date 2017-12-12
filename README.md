@@ -3,6 +3,13 @@ dotfiles
 
 zshrc, bashrc, vimrc and so on and so forth...
 
+gnome-terminal
+--------------
+
+My eyes are getting old, so solarized-light it is...
+The color palette is default solarized, except for Palette Color 13
+(which is used for directory entries). That has changed to `#2B9CA9`
+
 zshrc
 -----
 
