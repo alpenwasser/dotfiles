@@ -27,7 +27,7 @@ end
 set fish_greeting ""
 
 # -------------------------------------------------------------------------- #
-#                                                   Disable Greeting Message #
+#                                                                   SSH KEYS #
 # -------------------------------------------------------------------------- #
 # https://superuser.com/questions/84615/how-do-you-source-a-file-in-fish
 # https://bbs.archlinux.org/viewtopic.php?id=206366
@@ -63,6 +63,8 @@ alias paco='pacman -Qdt'        # list all orphans
                                 # configuration files. -Qt only lists true
                                 # orphans. -Qtt also lists optional
                                 # dependencies of installed packages.
+alias pkgs='pkgbuilder -s'      # search for package in AUR
+alias pkgi='pkgbuilder -S'      # install package from AUR
 
 #                                                           Keyboard Layouts #
 alias kbch='setxkbmap -layout ch'
@@ -89,5 +91,5 @@ complete -c ev -x -a "(find . -maxdepth 2 -iname '*pdf' -printf '%P\n')"
 # https://superuser.com/questions/409594/
 # /usr/share/fish/functions/fish_vi_key_bindings.fish, line 132
 function fish_user_key_bindings
-    bind -M insert \cf 'accept-autosuggestion'
+    bind -M insert \cf 'accept-autosuggestion' 2>&1
 end
