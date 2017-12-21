@@ -3,7 +3,10 @@
 " ============================================================================ "
 "
 "  Author: alpenwasser, webmaster@alpenwasser.net
-"  Date: December 2016 and onwards
+"  Date: December 2016
+"        December 2017
+
+set shell=/bin/sh
 
 " ---------------------------------------------------------------------------- "
 " Vundle                                                                       "
@@ -37,6 +40,7 @@ Bundle 'matze/vim-move'
 Bundle 'ervandew/supertab'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Bundle 'dag/vim-fish'
 
 
 call vundle#end()            " required
@@ -50,6 +54,7 @@ let g:ycm_global_ycm_extra_conf = '/usr/share/vim/vimfiles/third_party/ycmd/cpp/
 let g:ycm_server_python_interpreter = '/usr/bin/python2'
 let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:ycm_confirm_extra_conf = 0
 
 let g:SuperTabDefaultCompletionType = '<C-n>'
 
@@ -97,7 +102,8 @@ set viminfo^=%
 " ---------------------------------------------------------------------------- "
 
 if has("gui_running")
-    colorscheme corporation
+    "colorscheme corporation
+    colorscheme badwolf
 else
     colorscheme gruvbox
     set background=dark
@@ -216,8 +222,9 @@ if has("autocmd")
     filetype on
 
     " These filetypes are fussy about indentation
-    autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
-    autocmd FileType yaml setlocal ts=4 sts=4 sw=4 expandtab
+    autocmd FileType make     setlocal ts=8 sts=8 sw=8 noexpandtab
+    autocmd FileType automake setlocal ts=8 sts=8 sw=8 noexpandtab
+    autocmd FileType yaml     setlocal ts=4 sts=4 sw=4 expandtab
 
     " Personal Preferences
     autocmd FileType c      setlocal ts=8 sts=8 sw=8 noexpandtab
@@ -235,6 +242,8 @@ endif
 
 " Force Syntax Highlighting for LaTeX Class Files -------- "
 au BufReadPost *.cls set filetype=tex
+" same for tikz files
+au BufReadPost *.tikz set filetype=tex
 
 " General ------------------------------------------------ "
 nmap <Space>m :!make<CR>
